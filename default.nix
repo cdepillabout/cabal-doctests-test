@@ -23,14 +23,29 @@ let
       # pkg-def-extras = [
       #   # Additional packages ontop of all those listed in `cabal.project`
       # ];
-      # modules = [
-      #   # Specific package overrides would go here for example:
-      #   packages.cbors.package.ghcOptions = "-Werror";
-      #   packages.cbors.patches = [ ./one.patch ];
-      #   packages.cbors.flags.optimize-gmp = false;
-      #   # It may be better to set flags in `cabal.project` instead
-      #   # (`plan-to-nix` will include them as defaults).
-      # ];
+      modules = [
+        {
+          # packages.ghc.flags.ghci = true;
+          # packages.ghci.flags.ghci = true;
+
+          reinstallableLibGhc = true;
+          # packages.alex.package.setup-depends = [];
+          # packages.happy.package.setup-depends = [];
+
+          nonReinstallablePkgs = #lib.optionals (!reinstallableLibGhc)
+            [ "rts" "ghc-heap" "ghc-prim" "integer-gmp" "integer-simple" "base"
+              "deepseq" "array" "ghc-boot-th" "pretty" "template-haskell"
+              "ghc-boot"
+              "ghc" "Cabal" "Win32" "array" "binary" "bytestring" "containers"
+              "directory" "filepath" "ghc-boot" "ghc-compact" "ghc-prim"
+              "ghci" "haskeline"
+              "hpc"
+              "mtl" "parsec" "process" "text" "time" "transformers"
+              "unix" "xhtml"
+              "stm" "terminfo"
+            ];
+        }
+      ];
     };
 in
 
