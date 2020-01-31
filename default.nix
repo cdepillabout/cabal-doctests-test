@@ -20,19 +20,15 @@ let
       src = nixpkgs.haskell-nix.haskellLib.cleanGit { src = ./.; };
       index-state = "2020-01-26T00:00:00Z";
       # ghc = pkgs.buildPackages.pkgs.haskell-nix.compiler.${haskellCompiler};
-      # pkg-def-extras = [
-      #   # Additional packages ontop of all those listed in `cabal.project`
-      # ];
       modules = [
         {
           # packages.ghc.flags.ghci = true;
           # packages.ghci.flags.ghci = true;
 
-          reinstallableLibGhc = true;
-          # packages.alex.package.setup-depends = [];
-          # packages.happy.package.setup-depends = [];
+          # reinstallableLibGhc = true;
 
-          nonReinstallablePkgs = #lib.optionals (!reinstallableLibGhc)
+          # This is needed for the doctest library to be built.
+          nonReinstallablePkgs =
             [ "rts" "ghc-heap" "ghc-prim" "integer-gmp" "integer-simple" "base"
               "deepseq" "array" "ghc-boot-th" "pretty" "template-haskell"
               "ghc-boot"
@@ -44,6 +40,15 @@ let
               "unix" "xhtml"
               "stm" "terminfo"
             ];
+
+          packages.cabal-doctests-test.components.tests.doctests.isDoctest = true;
+          packages.cabal-doctests-test.components.tests.doctests.preBuild = ''
+            echo __________________________________________________________________________________________________________________________________________________
+            set -x
+            pwd
+            ls -lah
+            set +x
+          '';
         }
       ];
     };
